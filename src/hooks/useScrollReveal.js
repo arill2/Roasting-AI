@@ -7,7 +7,30 @@ export function useScrollReveal(options = {}) {
 
   useEffect(() => {
     const el = ref.current
-    if (!el) return
+    if (!el) {
+      // Element not mounted yet — retry via MutationObserver on next tick
+      const timer = setTimeout(() => {
+        const el2 = ref.current
+        if (!el2) return
+
+        const obs = new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting) {
+              setIsVisible(true)
+              if (triggerOnce) obs.unobserve(el2)
+            } else if (!triggerOnce) {
+              setIsVisible(false)
+            }
+          },
+          { threshold, rootMargin }
+        )
+        obs.observe(el2)
+        // Store for cleanup
+        ref._obs = obs
+      }, 100)
+      return () => clearTimeout(timer)
+    }
+
     const obs = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {

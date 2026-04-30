@@ -19,17 +19,16 @@ export default function CVRoaster() {
   const [sessionTick, setSessionTick] = useState(0)
   const [headerScrolled, setHeaderScrolled] = useState(false)
   const [dragOver, setDragOver] = useState(false)
+  const [showResult, setShowResult] = useState(false)
   const fileRef = useRef()
 
   const refreshSession = () => setSessionTick(t => t + 1)
 
-  // Scroll-triggered refs
+  // Scroll-triggered refs (only for elements that exist on initial render)
   const [introRef, introVisible] = useScrollReveal()
   const [uploadRef, uploadVisible] = useScrollReveal({ threshold: 0.1 })
   const [pasteRef, pasteVisible] = useScrollReveal({ threshold: 0.1 })
   const [ctaRef, ctaVisible] = useScrollReveal({ threshold: 0.2 })
-  const [resultRef, resultVisible] = useScrollReveal({ threshold: 0.05 })
-  const [actionsRef, actionsVisible] = useScrollReveal({ threshold: 0.2 })
 
   // Header blur on scroll
   useEffect(() => {
@@ -100,6 +99,8 @@ export default function CVRoaster() {
       recordUsage()
       refreshSession()
       setPhase('done')
+      // Trigger result animations after a brief delay so DOM has rendered
+      setTimeout(() => setShowResult(true), 50)
     } catch (err) {
       setError(err.message || 'Terjadi kesalahan. Coba lagi nanti.')
       setPhase('idle')
@@ -114,6 +115,7 @@ export default function CVRoaster() {
     setRoastResult('')
     setError('')
     setPhase('idle')
+    setShowResult(false)
     if (fileRef.current) fileRef.current.value = ''
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -126,7 +128,7 @@ export default function CVRoaster() {
           margin: '0 0 10px 0',
           lineHeight: 1.75,
           opacity: 0,
-          animation: resultVisible ? `fadeInUp 0.5s ${100 + i * 40}ms cubic-bezier(0.16,1,0.3,1) forwards` : 'none',
+          animation: showResult ? `fadeInUp 0.5s ${100 + i * 40}ms cubic-bezier(0.16,1,0.3,1) forwards` : 'none',
         }}>
           {parts.map((part, j) => {
             if (part.startsWith('**') && part.endsWith('**'))
@@ -442,13 +444,13 @@ export default function CVRoaster() {
 
         {/* ===== RESULT — SURAT HRD ===== */}
         {roastResult && phase === 'done' && (
-          <div ref={resultRef} style={{ marginTop: 48 }}>
+          <div style={{ marginTop: 48 }}>
             <div style={{
               fontSize: 11, letterSpacing: '0.25em',
               textTransform: 'uppercase', color: '#c0392b',
               fontFamily: 'Arial, sans-serif', marginBottom: 24, fontWeight: 700,
               opacity: 0,
-              animation: resultVisible ? 'fadeInUp 0.6s 0.1s cubic-bezier(0.16,1,0.3,1) forwards' : 'none',
+              animation: showResult ? 'fadeInUp 0.6s 0.1s cubic-bezier(0.16,1,0.3,1) forwards' : 'none',
             }}>
               ◆ Surat dari Meja HRD
             </div>
@@ -464,7 +466,7 @@ export default function CVRoaster() {
                 position: 'relative',
                 boxShadow: '0 4px 40px rgba(0,0,0,0.4)',
                 opacity: 0,
-                animation: resultVisible ? 'scaleIn 0.7s 0.2s cubic-bezier(0.16,1,0.3,1) forwards' : 'none',
+                animation: showResult ? 'scaleIn 0.7s 0.2s cubic-bezier(0.16,1,0.3,1) forwards' : 'none',
               }}
             >
               <div className="letter-inner" style={{
@@ -486,11 +488,10 @@ export default function CVRoaster() {
 
             {/* Actions */}
             <div
-              ref={actionsRef}
               style={{
                 display: 'flex', gap: 12, marginTop: 24,
                 opacity: 0,
-                animation: actionsVisible ? 'fadeInUp 0.5s 0.1s cubic-bezier(0.16,1,0.3,1) forwards' : 'none',
+                animation: showResult ? 'fadeInUp 0.5s 0.4s cubic-bezier(0.16,1,0.3,1) forwards' : 'none',
               }}
             >
               <button
@@ -532,7 +533,7 @@ export default function CVRoaster() {
               color: '#444', textAlign: 'center',
               fontStyle: 'italic',
               opacity: 0,
-              animation: actionsVisible ? 'fadeIn 0.5s 0.3s ease forwards' : 'none',
+              animation: showResult ? 'fadeIn 0.5s 0.6s ease forwards' : 'none',
             }}>
               Feedback ini dihasilkan AI. Gunakan sebagai masukan, bukan vonis final.
             </p>
