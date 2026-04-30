@@ -1,0 +1,247 @@
+/* ═══════════════════════════════════════════════════════════════
+   CV ROASTER — Global Styles & Animations
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Reset & Base ──────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #0a0a0a; }
+body { overflow-x: hidden; }
+
+/* ── Smooth Scrolling ──────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+
+/* ── Custom Scrollbar ──────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0a0a0a; }
+::-webkit-scrollbar-thumb { background: #c0392b44; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #c0392b88; }
+
+/* ── Keyframe Animations ──────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 6px rgba(192,57,43,0.3); }
+  50%      { box-shadow: 0 0 20px rgba(192,57,43,0.6); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes typingDot {
+  0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+  40%           { opacity: 1;   transform: scale(1); }
+}
+
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+@keyframes borderGlow {
+  0%, 100% { border-color: #c0392b44; }
+  50%      { border-color: #c0392baa; }
+}
+
+@keyframes letterReveal {
+  from { opacity: 0; transform: translateY(10px) rotateX(-40deg); }
+  to   { opacity: 1; transform: translateY(0) rotateX(0); }
+}
+
+@keyframes stampIn {
+  0%   { opacity: 0; transform: scale(3) rotate(-15deg); }
+  60%  { opacity: 1; transform: scale(0.9) rotate(2deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+/* ── Scroll Reveal Classes ─────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-scale.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ── Button Hover Effects ──────────────────────────────────── */
+.btn-roast {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.btn-roast::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.08) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+.btn-roast:hover::after {
+  transform: translateX(100%);
+}
+.btn-roast:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(192,57,43,0.4);
+}
+.btn-roast:not(:disabled):active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(192,57,43,0.3);
+}
+
+.btn-action {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.btn-action:hover {
+  transform: translateY(-1px);
+  border-color: #555 !important;
+  color: #c8bfb0 !important;
+}
+
+.btn-voucher {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.btn-voucher:hover {
+  border-color: #c0392b !important;
+  color: #c0392b !important;
+  background: rgba(192,57,43,0.06) !important;
+}
+
+/* ── Upload Drop Zone ──────────────────────────────────────── */
+.upload-zone {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.upload-zone:hover {
+  border-color: #c0392b !important;
+  background: rgba(192,57,43,0.04) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+/* ── Textarea Focus ────────────────────────────────────────── */
+.textarea-cv {
+  transition: all 0.3s ease !important;
+}
+.textarea-cv:focus {
+  border-color: #c0392b !important;
+  box-shadow: 0 0 0 2px rgba(192,57,43,0.15);
+}
+
+/* ── Loading Dots ──────────────────────────────────────────── */
+.loading-dots span {
+  display: inline-block;
+  width: 6px; height: 6px;
+  margin: 0 3px;
+  background: #c0392b;
+  border-radius: 50%;
+  animation: typingDot 1.4s infinite ease-in-out both;
+}
+.loading-dots span:nth-child(1) { animation-delay: 0s; }
+.loading-dots span:nth-child(2) { animation-delay: 0.16s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.32s; }
+
+/* ── Letter Card ───────────────────────────────────────────── */
+.letter-card {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.4s ease;
+}
+.letter-card:hover {
+  transform: translateY(-3px) rotate(-0.3deg);
+  box-shadow: 0 8px 50px rgba(0,0,0,0.5) !important;
+}
+
+/* ── Header Blur ───────────────────────────────────────────── */
+.header-blur {
+  backdrop-filter: blur(12px) saturate(1.4);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  background: rgba(10,10,10,0.85) !important;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ── Error Shake ───────────────────────────────────────────── */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-6px); }
+  40%      { transform: translateX(6px); }
+  60%      { transform: translateX(-4px); }
+  80%      { transform: translateX(4px); }
+}
+.error-shake {
+  animation: shake 0.5s ease;
+}
+
+/* ── Voucher Badge Pulse ───────────────────────────────────── */
+.badge-pulse span:first-child {
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+/* ── WhatsApp Button ───────────────────────────────────────── */
+.btn-whatsapp {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.btn-whatsapp:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(37,211,102,0.35);
+}
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .header-content { padding: 24px 20px 20px !important; }
+  .main-content { padding: 28px 20px 60px !important; }
+  .letter-inner { padding: 28px 24px !important; }
+  .voucher-bar { padding: 12px 16px !important; }
+}
