@@ -1,122 +1,147 @@
-# CV ROASTER — Edisi Jujur Tanpa Filter
+<div align="center">
+  
+# 🔥 CV Roaster
+**Edisi Jujur Tanpa Filter — Powered by Groq AI**
 
-Aplikasi web "CV Roaster" — tool yang menerima upload CV dari mahasiswa Indonesia dan memberikan feedback tajam ala HRD senior menggunakan AI. Target pengguna: mahasiswa yang mau masuk PTN, daftar beasiswa, atau melamar kerja pertama.
+[![React](https://img.shields.io/badge/React-18.3-61DAFB?style=flat-square&logo=react&logoColor=black)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Groq AI](https://img.shields.io/badge/AI-Llama_3.3_70B-f55036?style=flat-square)](https://groq.com/)
+[![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?style=flat-square&logo=vercel&logoColor=white)](https://vercel.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 
----
+*Aplikasi web yang menerima upload CV dari mahasiswa dan memberikan feedback tajam ala HRD senior. Tidak ada pujian palsu, tidak ada basa-basi.*
 
-## 🌟 Fitur Utama
+[Mulai Roasting](#-cara-setup--development-lokal) • [Arsitektur](#-arsitektur-sistem) • [Deployment](#-panduan-deploy-ke-vercel)
 
-- **AI Roasting (Groq API)**: Menggunakan model `llama-3.3-70b-versatile` dengan system prompt khusus ala "HRD Senior Galak".
-- **Sistem Voucher (Monetisasi)**: Sistem kuota berjenjang (Free 3x, Starter, Pro, Unlimited) menggunakan `localStorage`.
-- **Vercel Serverless Proxy**: Backend ringan untuk menyembunyikan API key dari browser dan menangani keamanan.
-- **UI/UX Premium**: Desain *dark editorial* dengan transisi halus dan animasi scroll-triggered.
-- **Dual Mode Input**: Mendukung upload file PDF (parsing via `pdfjs-dist`) atau paste teks manual.
-- **Keamanan Ganda**: Dilengkapi rate limiting, pembatasan ukuran file/teks, dan sanitasi error.
-
----
-
-## 🏗️ Arsitektur & Keamanan
-
-Awalnya project ini adalah *frontend-only*. Namun untuk skala produksi, telah ditambahkan **Vercel Serverless Function** (`api/roast.js`) sebagai proxy dengan fitur keamanan berikut:
-
-1. **API Key Protection**: Key disimpan di Vercel Env, tidak diekspos ke frontend.
-2. **Rate Limiting**: Frontend (12 detik debounce) & Backend (Max 5 request / menit / IP).
-3. **Input Validation**: Batas ukuran PDF maksimal 5MB, batas panjang teks maksimal 10.000 karakter.
-4. **Voucher Validation**: Memvalidasi input format kode voucher dan batas penggunaan free quota.
-5. **Error Sanitization**: Menyaring error dari API agar info internal tidak bocor ke user.
+</div>
 
 ---
 
-## 🛠️ Tech Stack
+## ✨ Fitur Utama
 
-- **Frontend**: React + Vite
-- **Backend (API)**: Vercel Serverless Functions (`api/roast.js`)
-- **Styling**: Vanilla CSS (`index.css`) + Inline Styles untuk komponen
-- **AI Engine**: Groq API
-- **PDF Parser**: `pdfjs-dist`
-- **Deployment**: Vercel
+- 🧠 **AI Roasting Engine**: Didukung oleh model Groq `llama-3.3-70b-versatile` dengan *system prompt* khusus persona HRD Senior Galak Indonesia.
+- 🎟️ **Sistem Voucher Multi-Tier**: Monetisasi cerdas dengan kuota berjenjang (Free, Starter, Pro, Unlimited) menggunakan algoritma validasi *client-side*.
+- 🛡️ **Keamanan Kelas Enterprise**: Dilengkapi Rate Limiting, File Size Limiting, Input Sanitization, dan Vercel Edge Proxy untuk melindungi API Key.
+- 📄 **Dual-Mode Parsing**: Mendukung ekstraksi teks langsung dari dokumen PDF (`pdfjs-dist`) atau input teks manual.
+- 🎨 **Premium UI/UX**: Antarmuka bergaya *Dark Editorial* dengan *Glassmorphism*, transisi halus, dan animasi *scroll-triggered*.
 
 ---
 
-## 📁 Struktur Folder Utama
+## 🏗 Arsitektur Sistem
 
-```
-cv-roaster/
-├── api/
-│   └── roast.js              ← Backend Proxy Vercel (Security & API Call)
-├── src/
-│   ├── components/
-│   │   ├── CVRoaster.jsx     ← UI Utama (Upload, Paste, Surat Hasil)
-│   │   └── VoucherGate.jsx   ← UI Bar Input Voucher & Status Kuota
-│   ├── constants/
-│   │   ├── prompt.js         ← System Prompt HRD Senior
-│   │   └── vouchers.js       ← Konfigurasi & Mapping Kode Voucher
-│   ├── hooks/
-│   │   └── useScrollReveal.js← Custom hook untuk animasi scroll
-│   ├── services/
-│   │   ├── groqService.js    ← Dual-mode service (Dev: Direct, Prod: via /api)
-│   │   └── voucherService.js ← Logika Kuota & LocalStorage Session
-│   └── utils/
-│       └── pdfParser.js      ← Parsing teks dari PDF
-├── .env                      ← Berisi Kode Voucher (dan API Key lokal)
-├── vercel.json               ← Konfigurasi routing Vercel
-└── index.html                ← Entry point (dilengkapi CSP Header)
+CV Roaster menggunakan arsitektur *Serverless Proxy* untuk memastikan keamanan API Key sekaligus memberikan performa maksimal tanpa backend server tradisional.
+
+```mermaid
+graph LR
+    Client([Browser Client]) 
+    Proxy[Vercel Serverless Function]
+    Groq[(Groq AI API)]
+    
+    subgraph Frontend [React + Vite]
+        Client -- "1. Upload PDF" --> Parser[PDF.js Parser]
+        Parser -- "2. Ekstrak Teks" --> Client
+        Client -- "3. Validasi Kuota" --> Storage[(LocalStorage)]
+    end
+    
+    Client -- "4. POST /api/roast" --> Proxy
+    
+    subgraph Vercel [Edge Network]
+        Proxy -- "Rate Limit Check" --> Proxy
+        Proxy -- "Input Sanitization" --> Proxy
+        Proxy -. "Inject API Key" .-> Env
+    end
+    
+    Proxy -- "5. POST /chat/completions" --> Groq
+    Groq -- "6. Stream Response" --> Proxy
+    Proxy -- "7. Return Result" --> Client
+    
+    style Client fill:#1a1a1a,stroke:#c0392b,stroke-width:2px,color:#fff
+    style Proxy fill:#000000,stroke:#fff,stroke-width:2px,color:#fff
+    style Groq fill:#f55036,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
 ---
 
-## 🎟️ Sistem Voucher (Cara Kerja)
+## 🛠 Tech Stack
 
-Sistem voucher berjalan di sisi client (`localStorage`) untuk MVP:
-- **FREE**: Default 3x penggunaan.
-- **STARTER / PRO / UNLIMITED**: Diaktifkan melalui kode rahasia.
-- **Kode**: Kode-kode voucher valid disimpan di file `.env` dan di-bundle ke build. Format kode: `STR-XXXXX`, `PRO-XXXXX`, `UNL-XXXXX`.
-- Kode yang sudah terpakai di sebuah browser akan masuk daftar `cv_used_vouchers`.
+| Kategori | Teknologi | Deskripsi |
+|---|---|---|
+| **Frontend** | React 18, Vite | Framework UI & Build tool super cepat |
+| **Styling** | Vanilla CSS | Desain kustom dengan animasi keyframes tingkat lanjut |
+| **Backend** | Vercel Serverless | Proxy API `req/res` handler (`api/roast.js`) |
+| **AI Engine** | Groq API | Eksekusi Llama 3.3 dengan latensi ultra-rendah |
+| **PDF Parser** | `pdfjs-dist` | Ekstraksi teks dokumen langsung di browser klien |
 
-*(Catatan Security: Karena menggunakan localStorage, sistem kuota ini bisa di-bypass oleh advanced user. Untuk upgrade selanjutnya, pindahkan validasi voucher sepenuhnya ke database backend seperti Supabase/Firebase).*
+---
+
+## 🔐 Standar Keamanan
+
+Sistem telah diaudit untuk lingkungan produksi:
+- ✅ **API Key Hiding**: `GROQ_API_KEY` disimpan di Vercel, *never exposed to browser*.
+- ✅ **Server-side Rate Limiting**: Max 5 request / menit / IP via Edge Function.
+- ✅ **Client-side Debounce**: Cooldown 12 detik antar request UI.
+- ✅ **Input Protection**: Pembatasan upload PDF max 5MB dan panjang teks max 10.000 karakter.
+- ✅ **Data Sanitization**: Format schema validation untuk `localStorage` session state.
 
 ---
 
 ## 🚀 Cara Setup & Development Lokal
 
-1. **Clone & Install**
+### Prasyarat
+- Node.js v18+
+- Akun [Groq Console](https://console.groq.com/) untuk mendapatkan API Key gratis.
+
+### Instalasi
+
+1. **Clone Repository**
    ```bash
    git clone https://github.com/arill2/Roasting-AI.git
    cd Roasting-AI
+   ```
+
+2. **Install Dependencies**
+   ```bash
    npm install
    ```
 
-2. **Setup Environment Variables**
-   Buat file `.env` di root folder dan isi dengan:
+3. **Konfigurasi Environment**
+   Buat file `.env` di root direktori project:
    ```env
+   # API Key untuk development lokal
    VITE_GROQ_API_KEY=gsk_your_api_key_here
    
-   # Kode Voucher Valid (pisahkan dengan koma)
+   # Konfigurasi Kode Voucher (pisahkan dengan koma)
    VITE_VOUCHERS_STARTER=STR-12345,STR-ABCDE
    VITE_VOUCHERS_PRO=PRO-99999,PRO-XYZ12
    VITE_VOUCHERS_UNLIMITED=UNL-BOSS0,UNL-ADMIN
    ```
 
-3. **Jalankan Dev Server**
+4. **Jalankan Server**
    ```bash
    npm run dev
    ```
-   *(Saat mode dev lokal, aplikasi akan langsung memanggil Groq API memakai `VITE_GROQ_API_KEY` untuk kemudahan testing tanpa Vercel CLI).*
+   *Aplikasi akan berjalan di `http://localhost:5173`*
 
 ---
 
-## 🌐 Panduan Deploy ke Vercel (Production)
+## 🌐 Panduan Deploy ke Vercel
 
-Project ini **wajib** dideploy ke Vercel agar backend proxy `/api/roast` berfungsi:
+Untuk mengaktifkan fitur keamanan penuh (Serverless Proxy), aplikasi harus di-deploy ke Vercel.
 
 1. Push repository ini ke GitHub.
-2. Buka [Vercel Dashboard](https://vercel.com/) dan buat **New Project**.
-3. Import repository GitHub ini.
-4. Di bagian **Environment Variables**, tambahkan:
-   - `GROQ_API_KEY` = `gsk_xxxx...` *(Key Groq untuk backend. Tidak perlu prefix VITE_)*
-   - `VITE_VOUCHERS_STARTER` = *(daftar kode)*
-   - `VITE_VOUCHERS_PRO` = *(daftar kode)*
-   - `VITE_VOUCHERS_UNLIMITED` = *(daftar kode)*
+2. Login ke [Vercel Dashboard](https://vercel.com/) dan buat **New Project**.
+3. Import repository **Roasting-AI**.
+4. Buka tab **Environment Variables** dan tambahkan:
+   - `GROQ_API_KEY` : *API Key Groq Anda (Tanpa awalan VITE_)*
+   - `VITE_VOUCHERS_STARTER` : *Daftar kode starter*
+   - `VITE_VOUCHERS_PRO` : *Daftar kode pro*
+   - `VITE_VOUCHERS_UNLIMITED` : *Daftar kode unlimited*
 5. Klik **Deploy**.
 
-*(Saat di production, frontend akan memanggil endpoint `/api/roast` sehingga API Key aman dan tidak pernah dikirim ke browser pengguna).*
+*Vercel akan secara otomatis menggunakan `vercel.json` untuk merutekan traffic `/api/*` ke serverless function.*
+
+---
+
+<div align="center">
+  <sub>Dibangun dengan dedikasi untuk membantu mahasiswa Indonesia mendapatkan realita dunia kerja sedini mungkin.</sub>
+</div>
